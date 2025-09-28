@@ -1,4 +1,10 @@
-export function calculateDowry({ male, female, view }) {
+export function calculateDowry({
+  male,
+  female,
+  maleParent,
+  femaleParent,
+  view,
+}) {
   let message = "";
   let breakdownData = [];
 
@@ -40,43 +46,36 @@ export function calculateDowry({ male, female, view }) {
     }
     return bonus;
   };
-  const addCarBonus = (person) => {
+
+  const addCarBonus = (person) => (person.car === "Yes" ? 500000 : -500000);
+
+  const addProfessionBonus = (profession) => {
     let bonus = 0;
-    if (person.car === "Yes") {
-      bonus += 500000;
-    } else {
-      bonus -= 500000;
-    }
+    if (profession === "Government Employee") bonus += 1000000;
+    if (profession === "Doctor") bonus += 500000;
+    if (profession === "Engineer") bonus += 300000;
+    if (profession === "IT") bonus += 300000;
+    if (profession === "Teacher") bonus += 100000;
+    if (profession === "Artist") bonus -= 100000;
+    if (profession === "Business") bonus -= 100000;
+    if (profession === "Unemployed Philosopher") bonus -= 500000;
+    if (profession === "Student") bonus -= 300000;
     return bonus;
   };
-  const addProfessionBonus = (person) => {
-    let bonus = 0;
-    if (person.profession === "Government Employee") bonus += 1000000;
-    if (person.profession === "Doctor") bonus += 500000;
-    if (person.profession === "Engineer") bonus += 300000;
-    if (person.profession === "IT") bonus += 300000;
-    if (person.profession === "Teacher") bonus += 100000;
-    if (person.profession === "Artist") bonus -= 100000;
-    if (person.profession === "Business") bonus -= 100000;
-    if (person.profession === "Unemployed Philosopher") bonus -= 500000;
-    if (person.profession === "Student") bonus -= 300000;
-    return bonus;
-  };
-  const addHomeBonus = (person) => {
-    let bonus = 0;
-    if (person.home === "Yes") {
-      bonus += 1000000;
-    } else {
-      bonus -= 1000000;
-    }
-    return bonus;
-  };
-  // ======= Individual dowry calculation =======
-  const calculateIndividualDowry = (person, salaryMultiplier = 5) => {
-    const salary = parseSalary(person.salary);
+
+  const addHomeBonus = (person) => (person.home === "Yes" ? 1000000 : -1000000);
+
+  // ======= Individual dowry calculation (include parents salary) =======
+  const calculateIndividualDowry = (
+    person,
+    parent = { salary: 0 },
+    salaryMultiplier = 5
+  ) => {
+    const salary = parseSalary(person.salary) + parseSalary(parent.salary);
     let dowry = salary * salaryMultiplier;
 
-    dowry += addProfessionBonus(person);
+    dowry += addProfessionBonus(person.profession);
+    dowry += addProfessionBonus(parent.occupation);
     dowry += addHomeBonus(person);
     dowry += addCarBonus(person);
     dowry += addEducationBonus(person);
@@ -87,7 +86,7 @@ export function calculateDowry({ male, female, view }) {
   };
 
   // ======= Satire contributions =======
-  const getSatireExtras = (person, gender) => {
+  const getSatireExtras = (person, parent, gender) => {
     const extras = [];
 
     if (gender === "male") {
@@ -101,6 +100,12 @@ export function calculateDowry({ male, female, view }) {
       if (person.age && person.age < 25) extras.push("Young and naive 🍼");
       if (parseSalary(person.salary) > 500000)
         extras.push("High income flex 💰");
+
+      // Parent info
+      if (parent.occupation)
+        extras.push(`Father's Occupation: ${parent.occupation}`);
+      if (parseSalary(parent.salary) > 0)
+        extras.push(`Father's Salary: ₹${formatIndianCurrency(parent.salary)}`);
     } else {
       if (person.profession === "Doctor") extras.push("Health checkups 🩺");
       if (person.profession === "Teacher") extras.push("Homework checking 📚");
@@ -113,33 +118,25 @@ export function calculateDowry({ male, female, view }) {
       if (person.age && person.age < 25) extras.push("Young and charming ✨");
       if (parseSalary(person.salary) > 300000)
         extras.push("High income flex 💰");
+
+      // Parent info
+      if (parent.occupation)
+        extras.push(`Father's Occupation: ${parent.occupation}`);
+      if (parseSalary(parent.salary) > 0)
+        extras.push(`Father's Salary: ₹${formatIndianCurrency(parent.salary)}`);
     }
 
     return extras.length ? extras.join(", ") : "None";
   };
 
-  // ======= Calculate male and female dowry =======
-  const maleDowry = calculateIndividualDowry(male);
-  console.log("male dowry is", maleDowry);
-  const femaleDowry = calculateIndividualDowry(female);
-  console.log("female dowry is ,", femaleDowry);
+  // ======= Calculate dowry =======
+  const maleDowry = calculateIndividualDowry(male, maleParent);
+  const femaleDowry = calculateIndividualDowry(female, femaleParent);
 
   let finalDowry = 0;
 
   if (view === "Couple") {
-    console.log("Both view selected");
-    if (maleDowry > 0 && femaleDowry < 0) {
-      finalDowry = maleDowry - femaleDowry;
-    } else if (femaleDowry > 0 && maleDowry > 0) {
-      finalDowry = maleDowry - femaleDowry;
-    } else if (femaleDowry < 0 && maleDowry < 0) {
-      finalDowry = 0;
-    } else if (femaleDowry > 0 && maleDowry < 0) {
-      finalDowry = maleDowry - femaleDowry;
-    } else {
-      finalDowry = maleDowry - femaleDowry;
-    }
-
+    finalDowry = maleDowry - femaleDowry;
     if (finalDowry === 0)
       message = "Congrats, equality wins! No dowry needed 🏆";
     else if (finalDowry > 0) message = "Female side pays more 💸";
@@ -150,12 +147,12 @@ export function calculateDowry({ male, female, view }) {
 
     breakdownData.push({
       side: "Male",
-      contributions: getSatireExtras(male, "male"),
+      contributions: getSatireExtras(male, maleParent, "male"),
       amount: formatIndianCurrency(maleDowry),
     });
     breakdownData.push({
       side: "Female",
-      contributions: getSatireExtras(female, "female"),
+      contributions: getSatireExtras(female, femaleParent, "female"),
       amount: formatIndianCurrency(femaleDowry),
     });
   } else if (view === "Male") {
@@ -163,7 +160,7 @@ export function calculateDowry({ male, female, view }) {
     message = `Male's total dowry: ₹${formatIndianCurrency(maleDowry)}`;
     breakdownData.push({
       side: "Male",
-      contributions: getSatireExtras(male, "male"),
+      contributions: getSatireExtras(male, maleParent, "male"),
       amount: formatIndianCurrency(maleDowry),
     });
   } else if (view === "Female") {
@@ -171,7 +168,7 @@ export function calculateDowry({ male, female, view }) {
     message = `Female's total dowry: ₹${formatIndianCurrency(femaleDowry)}`;
     breakdownData.push({
       side: "Female",
-      contributions: getSatireExtras(female, "female"),
+      contributions: getSatireExtras(female, femaleParent, "female"),
       amount: formatIndianCurrency(femaleDowry),
     });
   }

@@ -264,3 +264,59 @@ select {
   border-radius: 10px;
   transition: width 0.2s ease;
 }
+
+/* Toggle button */
+.toggle-btn {
+  display: inline-block;
+  margin: 10px 0;
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: #fff;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.toggle-btn:hover {
+  background-color: #45a049;
+}
+
+/* Parent Info section */
+.parent-info {
+  margin-top: 10px;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.parent-info h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.parent-info label {
+  display: block;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.parent-info input {
+  width: 100%;
+  padding: 6px 8px;
+  margin-top: 2px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.parent-info input:focus {
+  border-color: #4caf50;
+  outline: none;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
