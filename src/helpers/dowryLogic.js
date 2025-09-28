@@ -5,11 +5,11 @@ export function calculateDowry({
   femaleParent,
   view,
 }) {
-  console.log("male ", male);
-  console.log("female ", female);
-  console.log("maleParent ", maleParent);
-  console.log("femaleParent ", femaleParent);
-  console.log("view ", view);
+  //console.log("male ", male);
+  //console.log("female ", female);
+  //console.log("maleParent ", maleParent);
+  //console.log("femaleParent ", femaleParent);
+  //console.log("view ", view);
   let message = "";
   let breakdownData = [];
 
@@ -80,6 +80,7 @@ export function calculateDowry({
   const addHomeBonus = (person) => (person.home === "Yes" ? 1000000 : -1000000);
 
   const addParentNetWorthBonus = (netWorth) => {
+    //console.log("Parent net worth ", netWorth);
     const nw = parseSalary(netWorth);
     if (nw >= 1000000000) return 10000000; // 100 crore+
     if (nw >= 100000000) return 5000000; // 10 crore+
@@ -88,7 +89,7 @@ export function calculateDowry({
     if (nw >= 5000000) return 500000; // 50 lakh+
     if (nw >= 1000000) return 200000; // 10 lakh+
     if (nw >= 500000) return 100000; // 5 lakh+
-    if (nw > 0) return 50000;
+    if (nw >= 0) return 50000;
   };
   // 1 lakh+
   // ======= Individual dowry calculation (include parents salary) =======
@@ -99,16 +100,26 @@ export function calculateDowry({
   ) => {
     const salary = parseSalary(person.salary) + parseSalary(parent.salary);
     let dowry = salary * salaryMultiplier;
+    //console.log("Base dowry from salary is ", dowry);
 
     dowry += addProfessionBonus(person.profession);
+    //console.log("Profession bonus is ", addProfessionBonus(person.profession));
     dowry += addProfessionBonus(parent.occupation);
+    //console.log("Parent Profession bonus is ",addProfessionBonus(parent.occupation));
     dowry += addHomeBonus(person);
+    //console.log("Home bonus is ", addHomeBonus(person));
     dowry += addCarBonus(person);
+    //console.log("Car bonus is ", addCarBonus(person));
     dowry += addEducationBonus(person);
+    //console.log("Education bonus is ", addEducationBonus(person));
     dowry += addMatrialStatusBonus(person);
+    //console.log("Marital status bonus is ", addMatrialStatusBonus(person));
     dowry += addAgeBonus(person);
+    //console.log("Age bonus is ", addAgeBonus(person));
     dowry += addCasteBonus(person);
+    //console.log("Caste bonus is ", addCasteBonus(person));
     dowry += addParentNetWorthBonus(parent.totalWorth);
+    //console.log("Parent net worth bonus is ",addParentNetWorthBonus(parent.totalWorth));
 
     return dowry;
   };

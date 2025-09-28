@@ -172,7 +172,11 @@ export default function App() {
         </select>
 
         <label>Caste</label>
-        <select name="caste" value={data.caste}>
+        <select
+          name="caste"
+          value={data.caste}
+          onChange={(e) => handleChange(e, gender)}
+        >
           <option>General</option>
           <option>OBC</option>
           <option>SC/ST</option>
