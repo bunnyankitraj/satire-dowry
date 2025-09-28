@@ -4,6 +4,7 @@ import Header from "./header/Header";
 import { calculateDowry } from "./helpers/dowryLogic";
 import { formatIndianCurrency } from "./helpers/utils";
 import "./App.css";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App() {
   const [dowryValue, setDowryValue] = useState(0);
@@ -255,6 +256,7 @@ export default function App() {
       )}
 
       <Footer />
+      <Analytics />
     </div>
   );
 }
