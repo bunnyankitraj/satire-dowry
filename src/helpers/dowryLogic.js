@@ -29,7 +29,9 @@ export function calculateDowry({ male, female, view }) {
       message = "Both are broke, only blessings will do 🙏";
     }
 
-    // Increase dowry by 50× salary difference if male > female
+    if (male.profession === "Government Employee") {
+      dowryAmount += 2000000; // Add 5 lakh
+    }
     if (femaleSalary === 0) {
       dowryAmount += maleSalary * 10;
     } else if (maleSalary > femaleSalary) {
