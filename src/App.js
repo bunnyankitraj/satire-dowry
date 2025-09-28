@@ -9,7 +9,7 @@ export default function App() {
   const [dowryValue, setDowryValue] = useState(0);
   const [displayDowry, setDisplayDowry] = useState(0);
 
-  const [view, setView] = useState("Couple");
+  const [view, setView] = useState("Male");
   const [male, setMale] = useState({
     age: "",
     profession: "",

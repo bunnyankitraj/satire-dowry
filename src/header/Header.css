@@ -1,20 +1,22 @@
-.header-container {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 20px;
-  }
-  
-  .header-container h1 {
-    font-size: 2.5rem;
-    color: #d63384;
-    margin-bottom: 10px;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-  }
-  
-  .header-container p {
-    font-size: 1rem;
-    color: #555;
-    margin: 5px 0;
-    line-height: 1.5;
-  }
-  
+.app-header {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(90deg, #ffecd2, #fcb69f);
+  color: #333;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1.5rem;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #d94f4f;
+}
+
+.app-header p {
+  font-size: 1.1rem;
+  color: #555;
+  font-style: italic;
+}
