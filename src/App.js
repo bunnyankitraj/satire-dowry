@@ -222,8 +222,6 @@ export default function App() {
               <option>Artist</option>
               <option>Business</option>
               <option>Government Employee</option>
-              <option>Unemployed Philosopher</option>
-              <option>Student</option>
             </select>
 
             <label>Parent Salary (₹)</label>
