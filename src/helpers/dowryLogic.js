@@ -1,13 +1,17 @@
 export function calculateDowry({ male, female, view }) {
   let message = "";
-  let maleExtras = [];
-  let femaleExtras = [];
-  let dowryAmount = 0;
+  let breakdownData = [];
 
+  // ======= Utilities =======
   const parseSalary = (salaryStr) => {
     if (!salaryStr) return 0;
     const n = parseInt(salaryStr.toString().replace(/,/g, ""));
     return isNaN(n) ? 0 : n;
+  };
+
+  const formatIndianCurrency = (num) => {
+    if (!num) return "0";
+    return num.toLocaleString("en-IN");
   };
 
   const addEducationBonus = (person) => {
@@ -18,89 +22,96 @@ export function calculateDowry({ male, female, view }) {
     return bonus;
   };
 
-  const maleSalary = parseSalary(male.salary);
-  const femaleSalary = parseSalary(female.salary);
+  // ======= Individual dowry calculation =======
+  const calculateIndividualDowry = (person, salaryMultiplier = 5) => {
+    const salary = parseSalary(person.salary);
+    let dowry = salary * salaryMultiplier;
 
-  const maleHasSalary = maleSalary > 0;
-  const femaleHasSalary = femaleSalary > 0;
+    if (person.profession === "Government Employee") dowry += 500000;
+    if (person.car === "Yes") dowry += 500000;
+    if (person.home === "Yes") dowry += 1000000;
+    dowry += addEducationBonus(person);
 
-  // ======= View logic =======
-  if (view === "Couple") {
-    if (maleHasSalary && femaleHasSalary) {
-      message = "Congrats, equality wins! No dowry needed 🏆";
-    } else if (maleHasSalary && !femaleHasSalary) {
-      message = "Traditional logic: Female’s family pays dowry 💸";
-      dowryAmount = 500000;
-    } else if (!maleHasSalary && femaleHasSalary) {
-      message = "Reverse logic: Male’s family pays dowry 💸";
-      dowryAmount = 500000;
+    return dowry;
+  };
+
+  // ======= Satire contributions =======
+  const getSatireExtras = (person, gender) => {
+    const extras = [];
+
+    if (gender === "male") {
+      if (person.profession === "Engineer") extras.push("Free Jio hotspot 📶");
+      if (person.profession === "Doctor") extras.push("Free checkups 🩺");
+      if (person.profession === "IT") extras.push("WiFi expert skills 💻");
+      if (person.education === "PhD") extras.push("1000-page thesis 📄");
+      if (person.home === "Yes") extras.push("2BHK flat bragging rights 🏠");
+      if (person.car === "Yes") extras.push("Swift Dzire 🚗");
+      if (person.location === "Outside India") extras.push("NRI tag 🌍");
+      if (person.age && person.age < 25) extras.push("Young and naive 🍼");
+      if (parseSalary(person.salary) > 500000)
+        extras.push("High income flex 💰");
     } else {
-      message = "Both are broke, only blessings will do 🙏";
+      if (person.profession === "Doctor") extras.push("Health checkups 🩺");
+      if (person.profession === "Teacher") extras.push("Homework checking 📚");
+      if (person.profession === "IT") extras.push("Tech support skills 💻");
+      if (person.education === "Master's") extras.push("Extra degree 🎓");
+      if (person.home === "Yes") extras.push("Stability bonus 🏡");
+      if (person.car === "Yes") extras.push("Scooty pep+ 🛵");
+      if (person.location === "Outside India")
+        extras.push("Foreign diploma 🎓");
+      if (person.age && person.age < 25) extras.push("Young and charming ✨");
+      if (parseSalary(person.salary) > 300000)
+        extras.push("High income flex 💰");
     }
 
-    if (femaleSalary === 0) {
-      dowryAmount += maleSalary * 10;
-    } else if (maleSalary > femaleSalary) {
-      const diff = maleSalary - femaleSalary;
-      dowryAmount += diff * 5;
-    }
-  } else if (view === "Male") {
-    message = maleHasSalary ? "Male has income 💰" : "Male has no income 😅";
-    if (maleHasSalary) dowryAmount = maleSalary * 5;
-  } else if (view === "Female") {
-    message = femaleHasSalary
-      ? "Female has income 💰"
-      : "Female has no income 😅";
-    if (femaleHasSalary) dowryAmount = femaleSalary * 5;
-  }
+    return extras.length ? extras.join(", ") : "None";
+  };
 
-  // ======= Male bonuses =======
-  if (male.profession === "Government Employee") dowryAmount += 500000;
-  if (male.car === "Yes") dowryAmount += 500000;
-  if (male.home === "Yes") dowryAmount += 1000000;
-  dowryAmount += addEducationBonus(male);
+  // ======= Calculate male and female dowry =======
+  const maleDowry = calculateIndividualDowry(male);
+  const femaleDowry = calculateIndividualDowry(female);
 
-  // ======= Female bonuses =======
-  if (female.profession === "Government Employee") dowryAmount += 500000;
-  if (female.car === "Yes") dowryAmount += 300000; // less for satire
-  if (female.home === "Yes") dowryAmount += 500000;
-  dowryAmount += addEducationBonus(female);
+  let finalDowry = 0;
 
-  // ======= Satire extras =======
-  if (male.profession === "Engineer") maleExtras.push("Free Jio hotspot 📶");
-  if (male.profession === "Doctor") maleExtras.push("Free checkups 🩺");
-  if (male.profession === "IT") maleExtras.push("WiFi expert skills 💻");
-  if (male.education === "PhD") maleExtras.push("1000-page thesis 📄");
-  if (male.home === "Yes") maleExtras.push("2BHK flat bragging rights 🏠");
-  if (male.car === "Yes") maleExtras.push("Swift Dzire 🚗");
-  if (male.location === "Outside India") maleExtras.push("NRI tag 🌍");
-  if (male.age < 25) maleExtras.push("Young and naive 🍼");
-  if (male.salary > 500000) maleExtras.push("High income flex 💰");
+  if (view === "Couple") {
+    finalDowry = maleDowry - femaleDowry;
 
-  if (female.profession === "Doctor") femaleExtras.push("Health checkups 🩺");
-  if (female.profession === "Teacher")
-    femaleExtras.push("Homework checking 📚");
-  if (female.profession === "IT") femaleExtras.push("Tech support skills 💻");
-  if (female.education === "Master's") femaleExtras.push("Extra degree 🎓");
-  if (female.home === "Yes") femaleExtras.push("Stability bonus 🏡");
-  if (female.car === "Yes") femaleExtras.push("Scooty pep+ 🛵");
-  if (female.location === "Outside India")
-    femaleExtras.push("Foreign diploma 🎓");
-  if (female.age < 25) femaleExtras.push("Young and charming ✨");
-  if (female.salary > 300000) femaleExtras.push("High income flex 💰");
+    if (finalDowry === 0)
+      message = "Congrats, equality wins! No dowry needed 🏆";
+    else if (finalDowry > 0) message = "Male side pays more 💸";
+    else message = "Female side pays more 💸";
 
-  // ======= Prepare breakdown =======
-  const breakdownData = [];
-  if (view !== "Female")
     breakdownData.push({
       side: "Male",
-      contributions: maleExtras.length ? maleExtras.join(", ") : "None",
+      contributions: getSatireExtras(male, "male"),
+      amount: formatIndianCurrency(maleDowry),
     });
-  if (view !== "Male")
     breakdownData.push({
       side: "Female",
-      contributions: femaleExtras.length ? femaleExtras.join(", ") : "None",
+      contributions: getSatireExtras(female, "female"),
+      amount: formatIndianCurrency(femaleDowry),
     });
+  } else if (view === "Male") {
+    finalDowry = maleDowry;
+    message = `Male's total dowry: ₹${formatIndianCurrency(maleDowry)}`;
+    breakdownData.push({
+      side: "Male",
+      contributions: getSatireExtras(male, "male"),
+      amount: formatIndianCurrency(maleDowry),
+    });
+  } else if (view === "Female") {
+    finalDowry = femaleDowry;
+    message = `Female's total dowry: ₹${formatIndianCurrency(femaleDowry)}`;
+    breakdownData.push({
+      side: "Female",
+      contributions: getSatireExtras(female, "female"),
+      amount: formatIndianCurrency(femaleDowry),
+    });
+  }
 
-  return { message, breakdownData, dowryAmount };
+  return {
+    message,
+    breakdownData,
+    dowryAmount: finalDowry,
+  };
 }
