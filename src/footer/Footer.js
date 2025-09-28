@@ -34,7 +34,7 @@ export default function Footer() {
         <h2>📚 Resources</h2>
         <ul>
           <li>
-            <a href="https://ncw.nic.in/" target="_blank" rel="noreferrer">
+            <a href="https://www.ncw.gov.in/dowry-prohibition-act-1961/" target="_blank" rel="noreferrer">
               National Commission for Women - Dowry Prohibition Act
             </a>
           </li>
