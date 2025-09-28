@@ -218,7 +218,7 @@ export default function App() {
         Calculate 🔮
       </button>
 
-      {dowryValue > 0 && (
+      {
         <div className="dowry-bar-container">
           <p>Estimated Dowry: ₹{formatIndianCurrency(displayDowry)}</p>
           <div className="dowry-bar-bg">
@@ -230,7 +230,7 @@ export default function App() {
             ></div>
           </div>
         </div>
-      )}
+      }
 
       {result && (
         <div className="result">

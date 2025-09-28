@@ -16,21 +16,72 @@ export function calculateDowry({ male, female, view }) {
 
   const addEducationBonus = (person) => {
     let bonus = 0;
-    if (person.education === "Bachelor's") bonus += 500000;
+    if (person.education === "Bachelor's") bonus += 200000;
     if (person.education === "Master's") bonus += 300000;
-    if (person.education === "PhD") bonus += 300000;
+    if (person.education === "PhD") bonus += 500000;
     return bonus;
   };
 
+  const addMatrialStatusBonus = (person) => {
+    let bonus = 0;
+    if (person.marital === "Divorced") bonus -= 200000;
+    if (person.marital === "Married") bonus -= 500000;
+    return bonus;
+  };
+
+  const addAgeBonus = (person) => {
+    let bonus = 0;
+    if (person.age) {
+      const age = parseInt(person.age);
+      if (age < 25) bonus -= 200000;
+      else if (age <= 30) bonus += 300000;
+      else if (age <= 35) bonus += 100000;
+      else bonus -= 300000;
+    }
+    return bonus;
+  };
+  const addCarBonus = (person) => {
+    let bonus = 0;
+    if (person.car === "Yes") {
+      bonus += 500000;
+    } else {
+      bonus -= 500000;
+    }
+    return bonus;
+  };
+  const addProfessionBonus = (person) => {
+    let bonus = 0;
+    if (person.profession === "Government Employee") bonus += 1000000;
+    if (person.profession === "Doctor") bonus += 500000;
+    if (person.profession === "Engineer") bonus += 300000;
+    if (person.profession === "IT") bonus += 300000;
+    if (person.profession === "Teacher") bonus += 100000;
+    if (person.profession === "Artist") bonus -= 100000;
+    if (person.profession === "Business") bonus -= 100000;
+    if (person.profession === "Unemployed Philosopher") bonus -= 500000;
+    if (person.profession === "Student") bonus -= 300000;
+    return bonus;
+  };
+  const addHomeBonus = (person) => {
+    let bonus = 0;
+    if (person.home === "Yes") {
+      bonus += 1000000;
+    } else {
+      bonus -= 1000000;
+    }
+    return bonus;
+  };
   // ======= Individual dowry calculation =======
   const calculateIndividualDowry = (person, salaryMultiplier = 5) => {
     const salary = parseSalary(person.salary);
     let dowry = salary * salaryMultiplier;
 
-    if (person.profession === "Government Employee") dowry += 500000;
-    if (person.car === "Yes") dowry += 500000;
-    if (person.home === "Yes") dowry += 1000000;
+    dowry += addProfessionBonus(person);
+    dowry += addHomeBonus(person);
+    dowry += addCarBonus(person);
     dowry += addEducationBonus(person);
+    dowry += addMatrialStatusBonus(person);
+    dowry += addAgeBonus(person);
 
     return dowry;
   };
@@ -69,17 +120,33 @@ export function calculateDowry({ male, female, view }) {
 
   // ======= Calculate male and female dowry =======
   const maleDowry = calculateIndividualDowry(male);
+  console.log("male dowry is", maleDowry);
   const femaleDowry = calculateIndividualDowry(female);
+  console.log("female dowry is ,", femaleDowry);
 
   let finalDowry = 0;
 
   if (view === "Couple") {
-    finalDowry = maleDowry - femaleDowry;
+    console.log("Both view selected");
+    if (maleDowry > 0 && femaleDowry < 0) {
+      finalDowry = maleDowry - femaleDowry;
+    } else if (femaleDowry > 0 && maleDowry > 0) {
+      finalDowry = maleDowry - femaleDowry;
+    } else if (femaleDowry < 0 && maleDowry < 0) {
+      finalDowry = 0;
+    } else if (femaleDowry > 0 && maleDowry < 0) {
+      finalDowry = maleDowry - femaleDowry;
+    } else {
+      finalDowry = maleDowry - femaleDowry;
+    }
 
     if (finalDowry === 0)
       message = "Congrats, equality wins! No dowry needed 🏆";
-    else if (finalDowry > 0) message = "Male side pays more 💸";
-    else message = "Female side pays more 💸";
+    else if (finalDowry > 0) message = "Female side pays more 💸";
+    else {
+      message = "Male side pays more 💸";
+      finalDowry = Math.abs(finalDowry);
+    }
 
     breakdownData.push({
       side: "Male",
