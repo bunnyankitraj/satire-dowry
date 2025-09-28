@@ -1,22 +1,26 @@
 .app-header {
   text-align: center;
-  padding: 2rem 1rem;
-  background: linear-gradient(90deg, #ffecd2, #fcb69f);
-  color: #333;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  margin-bottom: 1.5rem;
+  padding: 1.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .app-header h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #d94f4f;
+  margin-bottom: 0.4rem;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .app-header p {
-  font-size: 1.1rem;
-  color: #555;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
   font-style: italic;
+  margin: 0;
 }
