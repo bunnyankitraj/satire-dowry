@@ -1,0 +1,20 @@
+.header-container {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+  }
+  
+  .header-container h1 {
+    font-size: 2.5rem;
+    color: #d63384;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .header-container p {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+    line-height: 1.5;
+  }
+  
