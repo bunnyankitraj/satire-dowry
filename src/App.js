@@ -10,8 +10,13 @@ export default function App() {
   const [displayDowry, setDisplayDowry] = useState(0);
 
   // Parent states
-  const [maleParent, setMaleParent] = useState({ occupation: "", salary: "" });
+  const [maleParent, setMaleParent] = useState({
+    totalWorth: "",
+    occupation: "",
+    salary: "",
+  });
   const [femaleParent, setFemaleParent] = useState({
+    totalWorth: "",
     occupation: "",
     salary: "",
   });
@@ -37,6 +42,7 @@ export default function App() {
     home: "Yes",
     car: "Yes",
     location: "India - Rural",
+    caste: "General",
   });
   const [female, setFemale] = useState({
     age: "",
@@ -47,6 +53,7 @@ export default function App() {
     home: "Yes",
     car: "Yes",
     location: "India - Rural",
+    caste: "General",
   });
 
   const [result, setResult] = useState("");
@@ -164,6 +171,14 @@ export default function App() {
           <option>School of Life</option>
         </select>
 
+        <label>Caste</label>
+        <select name="caste" value={data.caste}>
+          <option>General</option>
+          <option>OBC</option>
+          <option>SC/ST</option>
+          <option>Other</option>
+        </select>
+
         <label>Marital Status</label>
         <select
           name="marital"
@@ -207,6 +222,22 @@ export default function App() {
         {showParent && (
           <div className="parent-info">
             <h3>Parents Info</h3>
+
+            <label>Parent Total Worth</label>
+            <select
+              name="totalWorth"
+              value={parentData.totalWorth}
+              onChange={(e) => handleParentChange(e, gender)}
+            >
+              <option value="">Select</option>
+              <option value="500000">5lakh+</option>
+              <option value="1000000">10lakh+</option>
+              <option value="5000000">50lakh+</option>
+              <option value="10000000">1crore+</option>
+              <option value="50000000">5crore+</option>
+              <option value="100000000">10crore+</option>
+              <option value="10000000000">100crore+</option>
+            </select>
 
             <label>Parent Occupation</label>
             <select

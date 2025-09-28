@@ -5,6 +5,11 @@ export function calculateDowry({
   femaleParent,
   view,
 }) {
+  console.log("male ", male);
+  console.log("female ", female);
+  console.log("maleParent ", maleParent);
+  console.log("femaleParent ", femaleParent);
+  console.log("view ", view);
   let message = "";
   let breakdownData = [];
 
@@ -47,6 +52,15 @@ export function calculateDowry({
     return bonus;
   };
 
+  const addCasteBonus = (person) => {
+    let bonus = 0;
+    if (person.caste === "General") bonus += 500000;
+    if (person.caste === "OBC") bonus += 200000;
+    if (person.caste === "SC/ST") bonus += 10000;
+    if (person.caste === "Other") bonus -= 100000;
+    return bonus;
+  };
+
   const addCarBonus = (person) => (person.car === "Yes" ? 500000 : -500000);
 
   const addProfessionBonus = (profession) => {
@@ -65,6 +79,18 @@ export function calculateDowry({
 
   const addHomeBonus = (person) => (person.home === "Yes" ? 1000000 : -1000000);
 
+  const addParentNetWorthBonus = (netWorth) => {
+    const nw = parseSalary(netWorth);
+    if (nw >= 1000000000) return 10000000; // 100 crore+
+    if (nw >= 100000000) return 5000000; // 10 crore+
+    if (nw >= 50000000) return 2000000; // 5 crore+
+    if (nw >= 10000000) return 1000000; // 1 crore+
+    if (nw >= 5000000) return 500000; // 50 lakh+
+    if (nw >= 1000000) return 200000; // 10 lakh+
+    if (nw >= 500000) return 100000; // 5 lakh+
+    if (nw > 0) return 50000;
+  };
+  // 1 lakh+
   // ======= Individual dowry calculation (include parents salary) =======
   const calculateIndividualDowry = (
     person,
@@ -81,6 +107,8 @@ export function calculateDowry({
     dowry += addEducationBonus(person);
     dowry += addMatrialStatusBonus(person);
     dowry += addAgeBonus(person);
+    dowry += addCasteBonus(person);
+    dowry += addParentNetWorthBonus(parent.totalWorth);
 
     return dowry;
   };
