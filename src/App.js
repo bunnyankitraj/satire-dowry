@@ -1,41 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Footer from "./footer/Footer";
 import Header from "./header/Header";
 import { calculateDowry } from "./helpers/dowryLogic";
+import { formatIndianCurrency } from "./helpers/utils";
 import "./App.css";
 
 export default function App() {
+  const [dowryValue, setDowryValue] = useState(0);
+  const [displayDowry, setDisplayDowry] = useState(0);
+
   const [view, setView] = useState("Couple");
   const [male, setMale] = useState({
     age: "",
     profession: "",
     salary: "",
     education: "",
-    state: "",
-    marital: "",
-    home: "",
-    car: "",
-    location: "",
+    marital: "Single",
+    home: "Yes",
+    car: "Yes",
+    location: "India - Rural",
   });
   const [female, setFemale] = useState({
     age: "",
     profession: "",
     salary: "",
     education: "",
-    state: "",
-    marital: "",
-    home: "",
-    car: "",
-    location: "",
+    marital: "Single",
+    home: "Yes",
+    car: "Yes",
+    location: "India - Rural",
   });
 
   const [result, setResult] = useState("");
   const [breakdown, setBreakdown] = useState([]);
 
+  // Animate Dowry
+  useEffect(() => {
+    if (dowryValue > 0) {
+      let start = 0;
+      const increment = dowryValue / 50; // 50 steps
+      const interval = setInterval(() => {
+        start += increment;
+        if (start >= dowryValue) {
+          start = dowryValue;
+          clearInterval(interval);
+        }
+        setDisplayDowry(Math.floor(start));
+      }, 20);
+    } else {
+      setDisplayDowry(0);
+    }
+  }, [dowryValue]);
+
+  // Handle form input
   const handleChange = (e, gender) => {
-    if (gender === "male")
-      setMale({ ...male, [e.target.name]: e.target.value });
-    else setFemale({ ...female, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    let updatedValue = value;
+    // Only allow numbers for salary and age
+    if (name === "salary" || name === "age") {
+      updatedValue = value.replace(/\D/g, "");
+    }
+
+    if (gender === "male") setMale({ ...male, [name]: updatedValue });
+    else setFemale({ ...female, [name]: updatedValue });
   };
 
   const handleSubmit = (e) => {
@@ -43,6 +71,7 @@ export default function App() {
     const resultObj = calculateDowry({ male, female, view });
     setResult(resultObj.message);
     setBreakdown(resultObj.breakdownData);
+    setDowryValue(resultObj.dowryAmount);
   };
 
   const renderForm = (gender) => {
@@ -50,18 +79,18 @@ export default function App() {
     return (
       <div className="form-box">
         <h2>{gender === "male" ? "👨 Male Info" : "👩 Female Info"}</h2>
+
         <label>Age</label>
-        <select
+        <input
+          type="number"
           name="age"
-          onChange={(e) => handleChange(e, gender)}
           value={data.age}
-        >
-          <option value="">Select</option>
-          <option>18-22</option>
-          <option>23-28</option>
-          <option>29-35</option>
-          <option>35+</option>
-        </select>
+          onChange={(e) => handleChange(e, gender)}
+          min="18"
+          max="70"
+          placeholder="Enter Age"
+          className="age-input"
+        />
 
         <label>Profession</label>
         <select
@@ -73,23 +102,26 @@ export default function App() {
           <option>Engineer</option>
           <option>Doctor</option>
           <option>Teacher</option>
+          <option>IT</option>
           <option>Artist</option>
+          <option>Business</option>
+          <option>Government Employee</option>
           <option>Unemployed Philosopher</option>
+          <option>Student</option>
         </select>
 
-        <label>Monthly Salary</label>
-        <select
+        <label>Monthly Salary (₹)</label>
+        <input
+          type="number"
           name="salary"
-          onChange={(e) => handleChange(e, gender)}
           value={data.salary}
-        >
-          <option value="">Select</option>
-          <option>None</option>
-          <option>0 - 20k</option>
-          <option>20k - 50k</option>
-          <option>50k - 1L</option>
-          <option>1L+</option>
-        </select>
+          onChange={(e) => handleChange(e, gender)}
+          placeholder="Enter salary in ₹"
+          className="salary-input"
+        />
+        {data.salary && (
+          <small>Formatted: ₹{formatIndianCurrency(data.salary)}</small>
+        )}
 
         <label>Education</label>
         <select
@@ -105,27 +137,12 @@ export default function App() {
           <option>School of Life</option>
         </select>
 
-        <label>Residence State</label>
-        <select
-          name="state"
-          onChange={(e) => handleChange(e, gender)}
-          value={data.state}
-        >
-          <option value="">Select</option>
-          <option>Bihar</option>
-          <option>Delhi</option>
-          <option>Karnataka</option>
-          <option>Maharashtra</option>
-          <option>Kerala</option>
-        </select>
-
         <label>Marital Status</label>
         <select
           name="marital"
           onChange={(e) => handleChange(e, gender)}
           value={data.marital}
         >
-          <option value="">Select</option>
           <option>Single</option>
           <option>Married</option>
           <option>Divorced</option>
@@ -137,9 +154,8 @@ export default function App() {
           onChange={(e) => handleChange(e, gender)}
           value={data.home}
         >
-          <option value="">Select</option>
-          <option>Owned</option>
-          <option>Rented</option>
+          <option>Yes</option>
+          <option>No</option>
         </select>
 
         <label>Car Ownership</label>
@@ -148,21 +164,8 @@ export default function App() {
           onChange={(e) => handleChange(e, gender)}
           value={data.car}
         >
-          <option value="">Select</option>
           <option>Yes</option>
           <option>No</option>
-        </select>
-
-        <label>Location</label>
-        <select
-          name="location"
-          onChange={(e) => handleChange(e, gender)}
-          value={data.location}
-        >
-          <option value="">Select</option>
-          <option>India - Urban</option>
-          <option>India - Rural</option>
-          <option>Outside India</option>
         </select>
       </div>
     );
@@ -214,6 +217,20 @@ export default function App() {
       <button type="submit" className="submit-btn" onClick={handleSubmit}>
         Calculate 🔮
       </button>
+
+      {dowryValue > 0 && (
+        <div className="dowry-bar-container">
+          <p>Estimated Dowry: ₹{formatIndianCurrency(displayDowry)}</p>
+          <div className="dowry-bar-bg">
+            <div
+              className="dowry-bar-fill"
+              style={{
+                width: `${Math.min((displayDowry / 500000) * 100, 100)}%`,
+              }}
+            ></div>
+          </div>
+        </div>
+      )}
 
       {result && (
         <div className="result">
