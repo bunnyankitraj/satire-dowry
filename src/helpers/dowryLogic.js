@@ -178,9 +178,9 @@ export function calculateDowry({
     finalDowry = maleDowry - femaleDowry;
     if (finalDowry === 0)
       message = "Congrats, equality wins! No dowry needed 🏆";
-    else if (finalDowry > 0) message = "Female side pays more 💸";
+    else if (finalDowry > 0) message = "Female will pay 💸";
     else {
-      message = "Male side pays more 💸";
+      message = "Male will pay 💸";
       finalDowry = Math.abs(finalDowry);
     }
 
