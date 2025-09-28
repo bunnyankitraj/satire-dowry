@@ -1,23 +1,12 @@
-// Inside dowryLogic.js
-import { formatIndianCurrency } from "./utils";
-
 export function calculateDowry({ male, female, view }) {
   let message = "";
   let maleExtras = [];
   let femaleExtras = [];
-  let dowryAmount = 0; // numeric satire dowry
+  let dowryAmount = 0;
 
-  // Convert salary string to number (if using ranges)
   const parseSalary = (salaryStr) => {
-    if (!salaryStr || salaryStr === "None") return 0;
-    if (salaryStr.includes("0 - 20k")) return 20000;
-    if (salaryStr.includes("20k - 50k")) return 35000;
-    if (salaryStr.includes("50k - 1L")) return 75000;
-    if (salaryStr.includes("1L - 2L")) return 150000;
-    if (salaryStr.includes("2L - 5L")) return 350000;
-    if (salaryStr.includes("5L+")) return 500000;
-    // If user enters exact number, parse as integer
-    const n = parseInt(salaryStr.replace(/,/g, ""));
+    if (!salaryStr) return 0;
+    const n = parseInt(salaryStr.toString().replace(/,/g, ""));
     return isNaN(n) ? 0 : n;
   };
 
@@ -27,36 +16,34 @@ export function calculateDowry({ male, female, view }) {
   const maleHasSalary = maleSalary > 0;
   const femaleHasSalary = femaleSalary > 0;
 
-  // Dowry logic
   if (view === "Couple") {
     if (maleHasSalary && femaleHasSalary) {
-      message = "Congrats, both have money";
+      message = "Congrats, equality wins! No dowry needed 🏆";
     } else if (maleHasSalary && !femaleHasSalary) {
       message = "Traditional logic: Female’s family pays dowry 💸";
-      dowryAmount = 50000;
+      dowryAmount = 500000;
     } else if (!maleHasSalary && femaleHasSalary) {
       message = "Reverse logic: Male’s family pays dowry 💸 (tables turned)";
-      dowryAmount = 50000;
+      dowryAmount = 500000;
     } else {
       message = "Both are broke, only blessings will do 🙏";
     }
 
     // Increase dowry by 50× salary difference if male > female
-    if (maleSalary > femaleSalary) {
+    if (femaleSalary === 0) {
+      dowryAmount += maleSalary * 10;
+    } else if (maleSalary > femaleSalary) {
       const diff = maleSalary - femaleSalary;
-      dowryAmount += diff * 50;
-    }
-
-    // Append formatted dowry to message for display
-    if (dowryAmount > 0) {
-      message += ` | Estimated Dowry: ₹${formatIndianCurrency(dowryAmount)}`;
+      dowryAmount += diff * 5;
     }
   } else if (view === "Male") {
     message = maleHasSalary ? `Male has income 💰` : "Male has no income 😅";
+    if (maleHasSalary) dowryAmount = maleSalary * 7; // new logic
   } else if (view === "Female") {
     message = femaleHasSalary
       ? `Female has income 💰`
       : "Female has no income 😅";
+    if (femaleHasSalary) dowryAmount = femaleSalary * 5; // new logic
   }
 
   // Satire extras
