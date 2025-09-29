@@ -16,6 +16,7 @@
   margin-bottom: 0.4rem;
   color: #ffffff;
   text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  line-height: 1.2;
 }
 
 .app-header p {
@@ -23,4 +24,36 @@
   color: rgba(255, 255, 255, 0.9);
   font-style: italic;
   margin: 0;
+  line-height: 1.4;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 767px) {
+  .app-header {
+    padding: 1rem 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .app-header h1 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .app-header p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .app-header h1 {
+    font-size: 1.2rem;
+  }
+  
+  .app-header p {
+    font-size: 0.8rem;
+  }
 }
